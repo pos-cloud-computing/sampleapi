@@ -1,4 +1,4 @@
-# GUIA SAMPLE API .NET 6
+# GUIA SAMPLE API .NET 6 RODAR LOCAL
 
 Template para criação de CRUD .net 6 para rodar em container.
 
