@@ -1,0 +1,57 @@
+configMap:
+  baseConnection: "User Id={0};Password={1}; Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.15.188)(PORT=49161))(CONNECT_DATA=(SERVICE_NAME=xe)(SERVER=dedicated)));"
+service:
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 80
+      nodePort: 31000
+container:
+  replicas: 1
+  secret:
+    name:
+      oracledbSample: oracle-sample-secret
+    key:
+      oracleSampleUser: SAMPLEDB_DATABASE_USER
+      oracleSamplePassword: SAMPLEDB_DATABASE_PASSWORD
+  env:
+  - name: ASPNETCORE_ENVIRONMENT
+    value: Development
+  livenessProbe:
+    enabled: true
+    httpGet:
+      enabled: true
+      path: /api/v1/health
+      port: 80
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    failureThreshold: 3
+  readinessProbe:
+    enabled: true
+    httpGet:
+      enabled: true
+      path: /api/v1/health/ready
+      port: 80
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    successThreshold: 3
+    failureThreshold: 3
+  ports:
+    - name: http
+      containerPort: 80
+  resources:
+    enabled: true
+    cpu: 250m 
+    memory: 64Mi
+    limits: 
+      cpu: 500m 
+      memory: 128Mi
+hpa:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+    enabled: true
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 70

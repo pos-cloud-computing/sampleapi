@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }} 
+spec:
+  {{- with .Values.container }}
+  replicas: {{ .replicas }}
+  selector:
+    matchLabels:
+      app: {{ $.Release.Name }}
+  template:
+    metadata:
+      name: {{ $.Release.Name }}
+      labels:
+        app: {{ $.Release.Name }} 
+    spec:
+      containers:
+        - name: {{ $.Release.Name }} 
+          image: localhost:5000/skysampleapi:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+          {{- range .ports }}
+          - name: {{ .name }}
+            containerPort: {{ .containerPort }}
+          {{- end }} 
+          env:
+          - name: SAMPLEDB_DATABASE_CONNECTION
+            valueFrom:
+              configMapKeyRef:
+                name: {{ $.Release.Name }} 
+                key: baseConnection
+          - name: SAMPLEDB_DATABASE_USER
+            valueFrom:
+              secretKeyRef:
+                name: {{ .secret.name.oracledbSample }} 
+                key: {{ .secret.key.oracleSampleUser }} 
+          - name: SAMPLEDB_DATABASE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name:  {{ .secret.name.oracledbSample }} 
+                key: {{ .secret.key.oracleSamplePassword }} 
+            {{- toYaml .env | nindent 10 }}
+          {{- if eq .resources.enabled true }}             
+          resources:
+            requests:
+              memory: {{ .resources.memory }}
+              cpu: {{ .resources.cpu }}
+            limits:
+              memory: {{ .resources.limits.memory }}
+              cpu: {{ .resources.limits.cpu }}
+          {{- end }}
+          {{- if eq .livenessProbe.enabled true }}
+          livenessProbe:
+            {{- if eq .livenessProbe.httpGet.enabled true }}
+            httpGet:
+              path: {{ .livenessProbe.httpGet.path }} 
+              port: {{ .livenessProbe.httpGet.port }}
+            {{- end }}
+            initialDelaySeconds: {{ .livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .livenessProbe.periodSeconds }}
+            failureThreshold: {{ .livenessProbe.failureThreshold }}
+          {{- end }}
+          {{- if eq .readinessProbe.enabled true }}
+          readinessProbe:
+            {{- if eq .readinessProbe.httpGet.enabled true }}
+            httpGet:
+              path: {{ .readinessProbe.httpGet.path }}
+              port: {{ .readinessProbe.httpGet.port }}
+            {{- end }}
+            initialDelaySeconds: {{ .readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .readinessProbe.periodSeconds }}
+            successThreshold: {{ .readinessProbe.successThreshold }}
+            failureThreshold: {{ .readinessProbe.failureThreshold }}
+          {{- end }}
+        {{- end }}
