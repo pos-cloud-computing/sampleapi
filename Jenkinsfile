@@ -1,43 +1,35 @@
 pipeline {
     agent any
 
-
     stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
 
-        stage ('Clean workspace') {
+        stage('Restore packages') {
             steps {
-                cleanWs()
+                sh 'dotnet restore'
             }
         }
-        stage ('Checkout') {
+
+        stage('Build') {
             steps {
-                script {
-                    checkout scm
-                }
+                sh 'dotnet build'
             }
         }
-        stage ('Sonarqube validation') {
+
+        stage('Unit Tests') {
             steps {
-                script {
-                    scannerHome = tool 'sonar'
-                }
-                withSonarQubeEnv('sq1'){
-                    sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=sampleapi -Dsonar.sources=. -Dsonar.host.url=http://3.93.59.122:9000 -Dsonar.login=squ_70312d9e6984b0b573fcfdd1ce1ba5699a676db2"
-                }
+                sh 'dotnet test --logger "trx;LogFileName=testresults.trx"'
             }
         }
-        stage('Test: Unit Test'){
-        steps {
-            sh 'dotnet test --logger "trx;LogFileName=UnitTests.trx"'
-            }
-        }
-         stage ('Build Docker image') {
+
+        stage('Publish Test Results') {
             steps {
-                script {
-                    dockerapp = docker.build("995396735443.dkr.ecr.us-east-1.amazonaws.com/sampleapi:${env.BUILD_ID}", '-f ./Web.API/Dockerfile . ')
-                }
+                junit 'testresults.trx'
             }
         }
-   }
+    }
 }
-
