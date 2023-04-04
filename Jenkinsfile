@@ -21,7 +21,7 @@ pipeline {
                 script {
                     scannerHome = tool 'SonarScanner for MSBuild'
                 }
-                withSonarQubeEnv('sonar'){
+                withSonarQubeEnv('sq1'){
                     sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=SkyActivationApi -Dsonar.sources=. -Dsonar.host.url=http://54.175.167.78:9000 -Dsonar.login=91489c5ef7ee79a055ac2c7c0f8cc4638e2e7fd6"
                 }
             }
