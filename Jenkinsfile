@@ -28,7 +28,7 @@ pipeline {
         }
         stage('Test: Unit Test'){
         steps {
-            bat "dotnet test Domain.UnitTests\\Domain.UnitTests.csproj"
+            sh 'dotnet test --logger "trx;LogFileName=UnitTests.trx"'
             }
         }
          stage ('Build Docker image') {
