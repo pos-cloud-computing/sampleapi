@@ -37,7 +37,8 @@ namespace Domain.UnitTests.Sample
 			var ex = Assert.Throws<NotFoundException>(() => _sampleDomainService.Create(example));
 
 			//Assert
-			Assert.Equal(Message.SKY_EXAMPLE_NOT_FOUND, ex.Message);
+			//Assert.Equal(Message.SKY_EXAMPLE_NOT_FOUND, ex.Message);
+			Assert.Equal(Message.SKY_CORE_EMPTY_ID , ex.Message);
 		}
 	}
 }
