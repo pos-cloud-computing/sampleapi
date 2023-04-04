@@ -26,6 +26,11 @@ pipeline {
                 }
             }
         }
+        stage('Test: Unit Test'){
+        steps {
+            bat "dotnet test Domain.UnitTests\\Domain.UnitTests.csproj"
+            }
+        }
          stage ('Build Docker image') {
             steps {
                 script {
