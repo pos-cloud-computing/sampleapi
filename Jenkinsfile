@@ -19,10 +19,10 @@ pipeline {
         stage ('Sonarqube validation') {
             steps {
                 script {
-                    scannerHome = tool 'SonarScanner for MSBuild'
+                    scannerHome = tool 'sonar'
                 }
                 withSonarQubeEnv('sq1'){
-                    sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=sampleapi -Dsonar.sources=. -Dsonar.host.url=http://52.54.105.156:9000 -Dsonar.login=sqp_69a1f58af7334eb28ee10f9704d835c46e77310a"
+                    sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=sampleapi -Dsonar.sources=. -Dsonar.host.url=http://52.54.105.156:9000 -Dsonar.login=sqp_69a1f58af7334eb28ee10f9704d835c46e77310"
                 }
             }
         }
