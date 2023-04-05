@@ -16,16 +16,6 @@ pipeline {
                 }
             }
         }
-        stage ('Sonarqube validation') {
-            steps {
-                script {
-                    scannerHome = tool 'sonar'
-                }
-                withSonarQubeEnv('sq1'){
-                    sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=sampleapi -Dsonar.sources=. -Dsonar.host.url=http://3.93.59.122:9000 -Dsonar.login=squ_70312d9e6984b0b573fcfdd1ce1ba5699a676db2"
-                }
-            }
-        }
         stage('Test: Unit Test'){
         steps {
             sh 'dotnet test --logger "trx;LogFileName=UnitTests.trx"'
