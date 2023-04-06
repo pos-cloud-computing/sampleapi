@@ -32,7 +32,7 @@ pipeline {
         }
         stage('Notificando o usuario') {
             steps {
-                slackSend (color: 'good', message: "[ Sucesso ] O novo build versão:" + tag_version + " Gerado com sucesso. ", tokenCredentialId: 'slack-secret')
+                slackSend (color: 'good', message: "[ Sucesso ] O novo build versão:" + BUILD_ID + " Gerado com sucesso. ", tokenCredentialId: 'slack-secret')
             }
         }
 
@@ -40,9 +40,9 @@ pipeline {
             steps {
                 script {
                     try {
-                        build job: 'cd-simple-hml', parameters: [[$class: 'StringParameterValue', name: 'VERSION_IMAGE', value: $BUILD_ID]]
+                        build job: 'cd-simple-hml', parameters: [[$class: 'StringParameterValue', name: 'VERSION_IMAGE', value: BUILD_ID]]
                     } catch (Exception e) {
-                        slackSend (color: 'error', message: "[ FALHA ] Não foi possivel subir o container em producao", tokenCredentialId: 'slack-secret')
+                        slackSend (color: 'error', message: "[ FALHA ] Não foi possivel subir no ambiente de homologação", tokenCredentialId: 'slack-secret')
                         sh "echo $e"
                         currentBuild.result = 'ABORTED'
                         error('Erro')
