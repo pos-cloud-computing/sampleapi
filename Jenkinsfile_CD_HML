@@ -33,7 +33,32 @@ pipeline {
         }
         stage('Notificando o usuario') {
             steps {
-                slackSend (color: 'good', message: "[ Sucesso ] O novo build " + tag_version + " esta disponivel em: http://192.168.33.10:81/ ", tokenCredentialId: 'slack-secret')
+                slackSend (color: 'good', message: "[ Sucesso ] O novo build versão:" + tag_version + " esta disponivel no amabiente de homologação em: http://192.168.33.10:81/ ", tokenCredentialId: 'slack-secret')
+            }
+        }
+
+        stage ('Fazer o deploy em producao?') {
+            steps {
+                script {
+                    slackSend (color: 'warning', message: "Para aplicar a mudança em produção, acesse [Janela de 10 minutos]: ${JOB_URL}", tokenCredentialId: 'slack-secret')
+                    timeout(time: 10, unit: 'MINUTES') {
+                        input(id: "Deploy Gate", message: "Deploy em produção?", ok: 'Deploy')
+                    }
+                }
+            }
+        }
+        stage (deploy) {
+            steps {
+                script {
+                    try {
+                        build job: 'cd-simple-hml', parameters: [[$class: 'StringParameterValue', name: 'tag_version', value: tag_version]]
+                    } catch (Exception e) {
+                        slackSend (color: 'error', message: "[ FALHA ] Não foi possivel subir o container em producao", tokenCredentialId: 'slack-secret')
+                        sh "echo $e"
+                        currentBuild.result = 'ABORTED'
+                        error('Erro')
+                    }
+                }
             }
         }
    }
