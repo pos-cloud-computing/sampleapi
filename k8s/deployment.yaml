@@ -21,7 +21,6 @@ spec:
       containers:
         - name: sampleapi
           image: public.ecr.aws/p3q4d0z4/sampleapi:{{TAG}}
-          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
           env:
