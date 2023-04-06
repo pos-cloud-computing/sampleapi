@@ -37,14 +37,14 @@ pipeline {
         
             steps {
                 withKubeConfig ([credentialsId: 'eks-hml']) {
-                    sh 'sed -i "s/{{TAG}}/$tag_version/g" ./k8s/deployment.yaml'
+                    sh 'sed -i "s/{{TAG}}/$BUILD_ID/g" ./k8s/deployment.yaml'
                     sh 'kubectl apply -f ./k8s/deployment.yaml'
                 }                
             }
         }
         stage('Notificando o usuario') {
             steps {
-                slackSend (color: 'good', message: "[ Sucesso ] O novo build versão:" + tag_version + " esta disponivel no amabiente de homologação. ", tokenCredentialId: 'slack-secret')
+                slackSend (color: 'good', message: "[ Sucesso ] O novo build versão:" + BUILD_ID + " esta disponivel no amabiente de homologação. ", tokenCredentialId: 'slack-secret')
             }
         }
 
