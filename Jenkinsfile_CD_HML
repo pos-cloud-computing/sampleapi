@@ -37,12 +37,26 @@ pipeline {
             }
         }
 
-        stage ('Fazer o deploy em producao?') {
+       stage('Fazer o deploy em producao?') {
             steps {
                 script {
                     slackSend (color: 'warning', message: "Para aplicar a mudança em produção, acesse [Janela de 10 minutos]: ${JOB_URL}", tokenCredentialId: 'slack-secret')
                     timeout(time: 10, unit: 'MINUTES') {
-                        input(id: "Deploy Gate", message: "Deploy em produção?", ok: 'Deploy')
+                        input(id: "deploy-gate", message: "Deploy em produção?", ok: 'Deploy')
+                    }
+                }
+            }
+        }
+        stage (deploy) {
+            steps {
+                script {
+                    try {
+                        build job: 'cd-simple-hml', parameters: [[$class: 'StringParameterValue', name: 'tag_version', value: tag_version]]
+                    } catch (Exception e) {
+                        slackSend (color: 'error', message: "[ FALHA ] Não foi possivel subir o container em producao", tokenCredentialId: 'slack-secret')
+                        sh "echo $e"
+                        currentBuild.result = 'ABORTED'
+                        error('Erro')
                     }
                 }
             }
