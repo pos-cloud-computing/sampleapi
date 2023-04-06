@@ -1,41 +1,49 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: web
+  name: sampleapi-deployment
+  labels:
+    app: sampleapi
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: web
+      app: sampleapi
   template:
     metadata:
       labels:
-        app: web
+        app: sampleapi
       annotations: 
         prometheus.io/scrape: "true"
-        prometheus.io/port: "8080"
-        prometheus.io/path: "/metrics"  
-    spec: 
+        prometheus.io/port: "80"
+        prometheus.io/path: "/metrics" 
+    spec:
       containers:
-        - name: web
-          image: public.ecr.aws/p3q4d0z4/sampleapi:{{TAG}}
+        - name: sampleapi
+          image: public.ecr.aws/p3q4d0z4/sampleapi:50
+          imagePullPolicy: IfNotPresent
           ports:
-          - containerPort: 8080
+            - containerPort: 80
           env:
-          - ASPNETCORE_ENVIRONMENT: "Development"
-          - DB_SAMPLE_MSQL: "server=sample-db-hml.cdz1u8qrhkma.us-east-1.rds.amazonaws.com;database=sample_db;user=admin;password=Vini#0102Mi"
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Development
+            - name: DB_SAMPLE_MSQL
+              value: server=sample-db-hml.cdz1u8qrhkma.us-east-1.rds.amazonaws.com;database=sample_db;user=admin;password=Vini#0102Mi
+            - name: APPLICATION_NAME
+              value: sampleapi
 ---
 
 apiVersion: v1
 kind: Service
 metadata:
-  name: web
+  name: sampleapi-service
 spec:
-  selector:
-    app: web
-  ports:
-    - port: 80
-      targetPort: 8080
   type: LoadBalancer
+  selector:
+    app: sampleapi
+  ports:
+    - protocol: TCP
+      port: 80
+ 
 
 ---

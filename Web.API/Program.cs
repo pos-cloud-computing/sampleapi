@@ -7,7 +7,7 @@ using Prometheus;
 using Prometheus.DotNetRuntime;
 
 var builder = WebApplication.CreateBuilder(args);
-string applicationName = "SampleApi";
+string applicationName = "skyactivationapi";
 
 var applicationNameEnvironment = Environment.GetEnvironmentVariable("APPLICATION_NAME");
 
@@ -72,3 +72,4 @@ IDisposable collector = DotNetRuntimeStatsBuilder
 app.MapControllers();
 
 app.Run();
+
