@@ -5,7 +5,18 @@ pipeline {
     environment {
         tag_version = "${VERSION_IMAGE}"
     }
-
+    stage ('Clean workspace') {
+            steps {
+                cleanWs()
+            }
+    }
+    stage ('Checkout') {
+        steps {
+            script {
+                checkout scm
+            }
+        }
+    }
 
     stages {
         
