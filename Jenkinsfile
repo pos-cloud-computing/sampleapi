@@ -30,16 +30,6 @@ pipeline {
                 }
             }
         }
-
-         stage ('Deploy Ambiente de HML') {
-        
-            steps {
-                withKubeConfig ([credentialsId: 'eks-hml']) {
-                    sh 'sed -i "s/{{TAG}}/$tag_version/g" ./k8s/deployment.yaml'
-                    sh 'kubectl apply -f ./k8s/deployment.yaml'
-                }                
-            }
-        }
         stage('Notificando o usuario') {
             steps {
                 slackSend (color: 'good', message: "[ Sucesso ] O novo build versão:" + tag_version + " Gerado com sucesso. ", tokenCredentialId: 'slack-secret')
