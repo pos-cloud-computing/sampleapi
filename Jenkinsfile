@@ -62,7 +62,7 @@ pipeline {
             steps {
                 script {
                     try {
-                        build job: 'cd-simple-prd', parameters: [[$class: 'StringParameterValue', name: 'VERSION_IMAGE', value: tag_version]]
+                        build job: 'cd-simple-prd', parameters: [[$class: 'StringParameterValue', name: 'VERSION_IMAGE', value: BUILD_ID]]
                     } catch (Exception e) {
                         slackSend (color: 'error', message: "[ FALHA ] Não foi possivel subir o container em producao", tokenCredentialId: 'slack-secret')
                         sh "echo $e"
