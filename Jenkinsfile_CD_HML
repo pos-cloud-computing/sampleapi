@@ -2,6 +2,10 @@ pipeline {
         
     agent any
 
+    environment {
+        tag_version = "${VERSION_IMAGE}"
+    }
+
 
     stages {
 
@@ -19,9 +23,7 @@ pipeline {
         }
         
         stage ('Deploy Ambiente de HML') {
-            environment {
-                tag_version = "${VERSION_IMAGE}"
-            }
+        
             steps {
                 withKubeConfig ([credentialsId: 'eks-hml']) {
                     sh 'sed -i "s/{{TAG}}/$tag_version/g" ./k8s/deployment.yaml'
@@ -31,7 +33,7 @@ pipeline {
         }
         stage('Notificando o usuario') {
             steps {
-                slackSend (color: 'good', message: '[ Sucesso ] O novo build ""$tag_version""  esta disponivel em: http://192.168.33.10:81/ ', tokenCredentialId: 'slack-secret')
+                slackSend (color: 'good', message: '[ Sucesso ] O novo build  ${tag_version} esta disponivel em: http://192.168.33.10:81/ ', tokenCredentialId: 'slack-secret')
             }
         }
    }
