@@ -8,19 +8,6 @@ pipeline {
 
 
     stages {
-
-        stage ('Clean workspace') {
-            steps {
-                cleanWs()
-            }
-        }
-        stage ('Checkout') {
-            steps {
-                script {
-                    checkout scm
-                }
-            }
-        }
         
         stage ('Deploy Ambiente de PRD') {
         
