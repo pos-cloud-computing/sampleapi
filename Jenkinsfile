@@ -31,15 +31,33 @@ pipeline {
             }
         }
 
-        stage ('Deploy Ambiente de HML') {
-            environment {
-                tag_version = "${env.BUILD_ID}"
-            }
+         stage ('Deploy Ambiente de HML') {
+        
             steps {
                 withKubeConfig ([credentialsId: 'eks-hml']) {
                     sh 'sed -i "s/{{TAG}}/$tag_version/g" ./k8s/deployment.yaml'
                     sh 'kubectl apply -f ./k8s/deployment.yaml'
                 }                
+            }
+        }
+        stage('Notificando o usuario') {
+            steps {
+                slackSend (color: 'good', message: "[ Sucesso ] O novo build versão:" + tag_version + " Gerado com sucesso. ", tokenCredentialId: 'slack-secret')
+            }
+        }
+
+        stage (deploy) {
+            steps {
+                script {
+                    try {
+                        build job: 'cd-simple-hml', parameters: [[$class: 'StringParameterValue', name: 'VERSION_IMAGE', value: $BUILD_ID]]
+                    } catch (Exception e) {
+                        slackSend (color: 'error', message: "[ FALHA ] Não foi possivel subir o container em producao", tokenCredentialId: 'slack-secret')
+                        sh "echo $e"
+                        currentBuild.result = 'ABORTED'
+                        error('Erro')
+                    }
+                }
             }
         }
    }
