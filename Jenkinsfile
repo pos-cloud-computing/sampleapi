@@ -27,7 +27,6 @@ pipeline {
                  sh 'docker login -u AWS -p $(aws ecr-public get-login-password --region us-east-1) public.ecr.aws/p3q4d0z4'
                  sh 'docker build -t public.ecr.aws/p3q4d0z4/sampleapi:""$BUILD_ID"" -f ./Web.API/Dockerfile .' 
                  sh 'docker push public.ecr.aws/p3q4d0z4/sampleapi:""$BUILD_ID""'
-                 sh 'docker push public.ecr.aws/p3q4d0z4/sampleapi:latest'
                 }
             }
         }
