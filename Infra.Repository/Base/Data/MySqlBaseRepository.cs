@@ -168,25 +168,25 @@ namespace Infra.Repository.Base.Data
 		public void LogDebug(string message)
 		{
 			var messageFormat = string.Format("{0} - {1}", DateTime.Now.ToString("dd-MM-yyy hh:mm:ss"), message);
-			_logger.LogDebug(messageFormat);
+			//_logger.LogDebug(messageFormat);
 		}
 
 		public void LogInformation(string message)
 		{
 			var messageFormat = string.Format("{0} - {1}", DateTime.Now.ToString("dd-MM-yyy hh:mm:ss"), message);
-			_logger.LogInformation(messageFormat);
+			//_logger.LogInformation(messageFormat);
 		}
 
 		public void LogWarning(string message)
 		{
 			var messageFormat = string.Format("{0} - {1}", DateTime.Now.ToString("dd-MM-yyy hh:mm:ss"), message);
-			_logger.LogWarning(messageFormat);
+			//_logger.LogWarning(messageFormat);
 		}
 
 		public void LogError(string message, Exception exception)
 		{
 			var messageFormat = string.Format("{0} - {1}", DateTime.Now.ToString("dd-MM-yyy hh:mm:ss"), message);
-			_logger.LogError(messageFormat, exception);
+			//_logger.LogError(messageFormat, exception);
 		}
 	}
 }
