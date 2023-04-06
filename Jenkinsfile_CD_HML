@@ -5,8 +5,6 @@ pipeline {
     environment {
         tag_version = "${VERSION_IMAGE}"
     }
-
-
     stages {
         stage ('Clean workspace') {
                 steps {
@@ -31,7 +29,7 @@ pipeline {
         }
         stage('Notificando o usuario') {
             steps {
-                slackSend (color: 'good', message: "[ Sucesso ] O novo build versão:" + tag_version + " esta disponivel no amabiente de homologação em: http://192.168.33.10:81/ ", tokenCredentialId: 'slack-secret')
+                slackSend (color: 'good', message: "[ Sucesso ] O novo build versão:" + tag_version + " esta disponivel no amabiente de homologação. ", tokenCredentialId: 'slack-secret')
             }
         }
 
@@ -45,7 +43,7 @@ pipeline {
                 }
             }
         }
-        stage (deploy) {
+        stage ('Deploy em PRD') {
             steps {
                 script {
                     try {
