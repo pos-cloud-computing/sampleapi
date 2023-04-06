@@ -34,7 +34,7 @@ pipeline {
         stage('Notificando o usuario') {
             steps {
                 proin
-                slackSend (color: 'good', message: '[ Sucesso ] O novo build ' + tag_version + ' esta disponivel em: http://192.168.33.10:81/ ', tokenCredentialId: 'slack-secret')
+                slackSend (color: 'good', message: "[ Sucesso ] O novo build " + tag_version + " esta disponivel em: http://192.168.33.10:81/ ", tokenCredentialId: 'slack-secret')
             }
         }
    }
