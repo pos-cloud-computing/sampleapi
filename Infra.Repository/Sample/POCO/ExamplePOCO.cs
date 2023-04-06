@@ -4,13 +4,13 @@ namespace Infra.Repository.Sample.POCO
 {
 	public class ExampleOCO
 	{
-		[Mapping(ColumnName = "ID_SAMPLE_API")]
+		[Mapping(ColumnName = "Id")]
 		public long Id { get; set; }
 
-		[Mapping(ColumnName = "NM_SAMPLE")]
+		[Mapping(ColumnName = "Name")]
 		public string Name { get; set; }
 
-		[Mapping(ColumnName = "FL_ATIVO")]
+		[Mapping(ColumnName = "Active")]
 		public bool Active { get; set; }
 	}
 }

@@ -4,58 +4,61 @@ using Infra.Repository.Base.Data;
 using Infra.Repository.Sample.Adapter;
 using Infra.Repository.Sample.POCO;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics;
+using System.Xml.Linq;
 using Example = Domain.Sample.Entity.Example;
 
 namespace Infra.Repository.Sample
 {
-	public class ExampleRepository : BaseRepository, IExampleRepository
+	public class ExampleRepository : MySqlBaseRepository<ExampleOCO>, IExampleRepository
 	{
 		private readonly ExampleAdpter _exampleAdpter;
+		private string _connectionString ;
 		public ExampleRepository(ILogger<ExampleRepository> logger) : base(logger)
 		{
 			_exampleAdpter = new ExampleAdpter();
+			_connectionString = Environment.GetEnvironmentVariable("DB_SAMPLE_MSQL"); 
 		}
 
 		public Example Get(long id)
 		{
-			var parameters = new Dictionary<string, object>();
-			var sqlText = @"SELECT ID_SAMPLE_API,NM_SAMPLE, FL_ATIVO FROM SAMPLE where ID_SAMPLE_API =:ID_SAMPLE_API";
+			var sqlText = "SELECT Id,Name, Active FROM SAMPLE where id = @Id";
 
-			parameters.Add(":ID_SAMPLE_API", id);
+			var parameters = new { Id = id };
 
-			var samplesPOCO = OracleBase.ExecuteSingle<ExampleOCO>(Connection.SampleDB, sqlText, parameters);
+			var samplesPOCO = ExecuteQuery<ExampleOCO>(_connectionString, sqlText, parameters);
 
-			return _exampleAdpter.Parse(samplesPOCO);
+			return _exampleAdpter.Parse(samplesPOCO.FirstOrDefault());
 		}
 
 		public Example GetByName(string name)
 		{
-			var parameters = new Dictionary<string, object>();
-			var sqlText = @"SELECT ID_SAMPLE_API,NM_SAMPLE FROM SAMPLE where NM_SAMPLE =:NM_SAMPLE";
+			var sqlText = @"SELECT Id,Name, Active FROM SAMPLE where Name = @Name";
 
-			parameters.Add(":NM_SAMPLE", name);
+			var parameters = new { Name = name };
 
-			var samplesPOCO = OracleBase.ExecuteSingle<ExampleOCO>(Connection.SampleDB, sqlText, parameters);
+			var samplesPOCO = ExecuteQuery<ExampleOCO>(_connectionString, sqlText, parameters);
 
-			return _exampleAdpter.Parse(samplesPOCO);
+			return _exampleAdpter.Parse(samplesPOCO.FirstOrDefault());
 		}
 
 		public void Save(Example example)
 		{
-			var parameters = new Dictionary<string, object>();
-			var sql = "INSERT INTO  SAMPLE (ID_SAMPLE_API,NM_SAMPLE, FL_ATIVO) values (SAMPLE_API_SEQUENCE.nextval, :NM_SAMPLE, :FL_ATIVO)";
-
-			parameters.Add(":NM_SAMPLE", example.Name);
+			var sql = "INSERT INTO  SAMPLE (Name, Active) values ( @Name, @Active)";
 
 			if (example.Id != 0)
 			{
-				sql = "UPDATE SAMPLE SET NM_SAMPLE = :NM_SAMPLE, FL_ATIVO = :FL_ATIVO WHERE ID_SAMPLE_API = :ID_SAMPLE_API ";
-				parameters.Add(":ID_SAMPLE_API", example.Id);
+				sql = "UPDATE SAMPLE SET Name = @Name, Active = @Active WHERE Id = @Id ";
+				var parametersUpdate = new { Name = example.Name, Active = example.Active, Id = example.Id };
+				ExecuteUpdateQuery(_connectionString, sql, parametersUpdate);
+			}
+			else
+			{
+				var parameters = new { Name = example.Name, Active = example.Active };
+
+				ExecuteUpdateQuery(_connectionString, sql, parameters);
 			}
 
-			parameters.Add(":FL_ATIVO", Convert.ToInt16(example.Active));
-
-			OracleBase.ExecuteNoQuery(sql, parameters, System.Data.CommandType.Text, Connection.SampleDB);
 		}
 	}
 }

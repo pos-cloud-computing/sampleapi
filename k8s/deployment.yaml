@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+      annotations: 
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/metrics"  
+    spec: 
+      containers:
+        - name: web
+          image: public.ecr.aws/p3q4d0z4/sampleapi:{{TAG}}
+          ports:
+          - containerPort: 8080
+          env:
+          - ASPNETCORE_ENVIRONMENT: "Development"
+          - DB_SAMPLE_MSQL: "server=sample-db-hml.cdz1u8qrhkma.us-east-1.rds.amazonaws.com;database=sample_db;user=admin;password=Vini#0102Mi"
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+spec:
+  selector:
+    app: web
+  ports:
+    - port: 80
+      targetPort: 8080
+  type: LoadBalancer
+
+---
