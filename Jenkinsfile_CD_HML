@@ -27,7 +27,7 @@ pipeline {
        stage('Fazer o deploy em producao?') {
             steps {
                 script {
-                    slackSend (color: 'warning', message: "Para aplicar a mudança em produção, acesse [Janela de 10 minutos]:  ${env.JENKINS_URL}", tokenCredentialId: 'slack-secret')
+                    slackSend (color: 'warning', message: "Para aplicar a mudança em produção, acesse [Janela de 10 minutos]: ${JOB_URL}", tokenCredentialId: 'slack-secret')
                     timeout(time: 10, unit: 'MINUTES') {
                         input(id: "deploy-gate", message: "Deploy em produção?", ok: 'Deploy')
                     }
