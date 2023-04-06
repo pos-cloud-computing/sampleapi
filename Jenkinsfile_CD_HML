@@ -47,20 +47,6 @@ pipeline {
                 }
             }
         }
-        stage (deploy) {
-            steps {
-                script {
-                    try {
-                        build job: 'cd-simple-hml', parameters: [[$class: 'StringParameterValue', name: 'tag_version', value: tag_version]]
-                    } catch (Exception e) {
-                        slackSend (color: 'error', message: "[ FALHA ] Não foi possivel subir o container em producao", tokenCredentialId: 'slack-secret')
-                        sh "echo $e"
-                        currentBuild.result = 'ABORTED'
-                        error('Erro')
-                    }
-                }
-            }
-        }
    }
 }
 
