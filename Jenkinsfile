@@ -16,6 +16,16 @@ pipeline {
                 }
             }
         }
+        stage ('Sonarqube validation') {
+            steps {
+                script {
+                    scannerHome = tool 'sonar'
+                }
+                withSonarQubeEnv('sq1'){
+                    sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=sampleapi -Dsonar.sources=. -Dsonar.host.url=http://3.93.59.122:9000 -Dsonar.login=squ_70312d9e6984b0b573fcfdd1ce1ba5699a676db2"
+                }
+            }
+        }
         stage('Test: Unit Test'){
         steps {
             sh 'dotnet test --logger "trx;LogFileName=UnitTests.trx"'
@@ -33,7 +43,7 @@ pipeline {
             }
         }
 
-        stage ('Deploy Ambiente de HML') {
+        stage ('Deploy HML') {
         
             steps {
                 withKubeConfig ([credentialsId: 'eks-hml']) {
@@ -42,23 +52,23 @@ pipeline {
                 }                
             }
         }
-        stage('Notificando o usuario') {
+        stage('Notifying user') {
             steps {
                 slackSend (color: 'good', message: "[ Sucesso ] O novo build versão:" + BUILD_ID + " esta disponivel no amabiente de homologação. ", tokenCredentialId: 'slack-secret')
             }
         }
 
-       stage('Fazer o deploy em producao?') {
+       stage('Do you want to deploy to production?') {
             steps {
                 script {
-                    slackSend (color: 'warning', message: "Para aplicar a mudança em produção, acesse [Janela de 10 minutos]: ${JOB_URL}", tokenCredentialId: 'slack-secret')
-                    timeout(time: 10, unit: 'MINUTES') {
+                    slackSend (color: 'warning', message: "Para aplicar a mudança em produção, acesse [Janela de 30 minutos]: ${JOB_URL}", tokenCredentialId: 'slack-secret')
+                    timeout(time: 30, unit: 'MINUTES') {
                         input(id: "deploy-gate", message: "Deploy em produção?", ok: 'Deploy')
                     }
                 }
             }
         }
-        stage ('Deploy em PRD') {
+        stage ('Deploy PRD') {
             steps {
                 script {
                     try {

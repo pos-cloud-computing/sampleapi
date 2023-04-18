@@ -20,7 +20,7 @@ pipeline {
                 }
             }
         }          
-        stage ('Deploy Ambiente de PRD') {
+        stage ('Deploy PRD') {
         
             steps {
                 withKubeConfig ([credentialsId: 'eks-hml']) {
@@ -29,7 +29,7 @@ pipeline {
                 }                
             }
         }
-        stage('Notificando o usuario') {
+        stage('Notifying user') {
             steps {
                 slackSend (color: 'good', message: "[ Sucesso ] O novo build versão:" + tag_version + " esta disponivel no amabiente de produção ", tokenCredentialId: 'slack-secret')
             }
