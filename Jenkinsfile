@@ -68,7 +68,7 @@ pipeline {
                 }
             }
         }
-        stage ('Deploy PRD') {
+       /* stage ('Deploy PRD') {
             steps {
                 script {
                     try {
@@ -81,7 +81,7 @@ pipeline {
                     }
                 }
             }
-        }
+        }*/
    }
 }
 
