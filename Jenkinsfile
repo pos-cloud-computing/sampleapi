@@ -18,7 +18,7 @@ pipeline {
         }
   stage ('Sonarqube validation') {
             steps {
-              
+              println("Passou")
               /*  script {
                     scannerHome = tool 'sonar'
                 }
@@ -48,6 +48,7 @@ pipeline {
         stage ('Deploy HML') {
         
             steps {
+                println("Passou")
              //   withKubeConfig ([credentialsId: 'eks-hml']) {
              //       sh 'sed -i "s/{{TAG}}/$BUILD_ID/g" ./k8s/deployment.yaml'
              //       sh 'kubectl apply -f ./k8s/deployment.yaml'
