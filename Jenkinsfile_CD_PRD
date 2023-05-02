@@ -23,10 +23,10 @@ pipeline {
         stage ('Deploy PRD') {
         
             steps {
-                withKubeConfig ([credentialsId: 'eks-prd']) {
+               /* withKubeConfig ([credentialsId: 'eks-prd']) {
                     sh 'sed -i "s/{{TAG}}/$tag_version/g" ./k8s/deployment.yaml'
                     sh 'kubectl apply -f ./k8s/deployment.yaml'
-                }                
+                }*/              
             }
         }
         stage('Notifying user') {
