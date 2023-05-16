@@ -19,4 +19,5 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 ENV TZ=America/Sao_Paulo
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 ENTRYPOINT ["dotnet", "Web.API.dll"]
