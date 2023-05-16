@@ -19,18 +19,18 @@ pipeline {
         stage ('Sonarqube validation') {
             steps {
               println("Passou")
-             /*   script {
+               script {
                     scannerHome = tool 'sonar'
                 }
                 withSonarQubeEnv('sq1'){
                     sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=sampleapi -Dsonar.sources=. -Dsonar.host.url=http://54.91.212.205:9000 -Dsonar.login=sqp_129d2b898a6e58aa7639803d59042166d90f7574"
-                } */
+                } 
                 
             }
         }
         stage('Test: Unit Test'){
         steps {
-           // sh 'dotnet test --logger "trx;LogFileName=UnitTests.trx"'
+            sh 'dotnet test --logger "trx;LogFileName=UnitTests.trx"'
             println("Passou")
             }
         }
