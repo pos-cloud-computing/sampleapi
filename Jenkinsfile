@@ -19,13 +19,13 @@ pipeline {
   stage ('Sonarqube validation') {
             steps {
               println("Passou")
-              /*  script {
+                script {
                     scannerHome = tool 'sonar'
                 }
                 withSonarQubeEnv('sq1'){
-                    sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=sampleapi -Dsonar.sources=. -Dsonar.host.url=http://18.207.126.25:9000 -Dsonar.login=squ_70312d9e6984b0b573fcfdd1ce1ba5699a676db2"
+                    sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=sampleapi -Dsonar.sources=. -Dsonar.host.url=http://54.91.212.205:9000 -Dsonar.login=squ_70312d9e6984b0b573fcfdd1ce1ba5699a676db2"
                 } 
-                */
+                
             }
         }
         stage('Test: Unit Test'){
@@ -49,10 +49,10 @@ pipeline {
         
             steps {
                 println("Passou")
-             //   withKubeConfig ([credentialsId: 'eks-hml']) {
-             //       sh 'sed -i "s/{{TAG}}/$BUILD_ID/g" ./k8s/deployment.yaml'
-             //       sh 'kubectl apply -f ./k8s/deployment.yaml'
-             //   }                
+                withKubeConfig ([credentialsId: 'eks-hml']) {
+                    sh 'sed -i "s/{{TAG}}/$BUILD_ID/g" ./k8s/deployment.yaml'
+                    sh 'kubectl apply -f ./k8s/deployment.yaml'
+               }                
             }
         }
         stage('Notifying user') {
