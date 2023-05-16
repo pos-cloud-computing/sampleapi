@@ -36,6 +36,7 @@ pipeline {
         stage('Publish Image ECR'){
             steps {
                 withEnv(["AWS_ACCESS_KEY_ID=${env.AWS_ACCESS_KEY_ID}", "AWS_SECRET_ACCESS_KEY=${env.AWS_SECRET_ACCESS_KEY}", "AWS_DEFAULT_REGION=${env.AWS_DEFAULT_REGION}"]){
+                 sh "docker system prune -a" 
                  sh 'docker login -u AWS -p $(aws ecr-public get-login-password --region us-east-1) public.ecr.aws/p3q4d0z4'
                  sh 'docker build -t public.ecr.aws/p3q4d0z4/sampleapi:""$BUILD_ID"" -f ./Web.API/Dockerfile .' 
                  sh 'docker push public.ecr.aws/p3q4d0z4/sampleapi:""$BUILD_ID""'
